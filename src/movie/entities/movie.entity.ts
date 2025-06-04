@@ -2,29 +2,90 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  PrimaryColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ReviewEntity } from '../../review/entity/review.entity';
+import { ActorEntity } from '../../actor/entities/actor.entity';
+
+export enum Genre {
+  ACTION = 'ACTION',
+  COMEDY = 'COMEDY',
+  DRAMA = 'DRAMA',
+  HORROR = 'HORROR',
+}
 
 @Entity({ name: 'movies' })
 export class MovieEntity {
-  @PrimaryColumn()
-  @Generated('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 120,
+    nullable: false,
+  })
   title: string;
 
-  @Column()
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  description: string;
+
+  @Column({
+    type: 'integer',
+    unsigned: true,
+    name: 'release_year',
+  })
   releaseYear: number;
 
-  @CreateDateColumn()
+  @Column({
+    type: 'decimal',
+    precision: 3,
+    scale: 1,
+    default: 0.0,
+  })
+  rating: number;
+
+  @CreateDateColumn({
+    name: 'created_at',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @Column({
+    type: 'date',
+    nullable: true,
+    name: 'release_date',
+  })
+  releaseDate: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+  })
   updatedAt: Date;
 
-  @Column({ default: false })
+  @Column({ default: false, type: 'boolean', name: 'is_public' })
   isPublic: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: Genre,
+    default: Genre.ACTION,
+  })
+  genre: Genre;
+
+  @OneToMany(() => ReviewEntity, (review) => review.movie)
+  reviews: ReviewEntity[];
+
+  @ManyToMany(() => ActorEntity, (actor) => actor.movies)
+  @JoinTable({
+    name: 'movie_actors',
+    joinColumn: { name: 'movie_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'actor_id', referencedColumnName: 'id' },
+  })
+  actors: ActorEntity[];
 }
