@@ -1,13 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ReviewService } from './review.service';
-import { CreateReviewDto } from './dto/create-review.dto';
+import { Controller } from '@nestjs/common';
 
 @Controller('review')
 export class ReviewController {
-  constructor(private readonly reviewService: ReviewService) {}
-
-  @Post('create')
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
-  }
+  // constructor(private readonly reviewService: ReviewService) {}
+  //
+  // @Post('create')
+  // create(@Body() createReviewDto: CreateReviewDto) {
+  //   return this.reviewService.create(createReviewDto);
+  // }
 }
