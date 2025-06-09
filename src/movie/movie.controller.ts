@@ -1,33 +1,31 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MovieService } from './movie.service';
-import { MovieDto } from './dto/movie.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('movie')
+@ApiTags('Movie')
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
-  @Get()
+  @Get('all')
+  @ApiOperation({
+    summary: 'Get all movies',
+    description: 'Get list of all movies as you can',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'You got movie list',
+  })
   findAll() {
-    return this.movieService.findAll();
+    return [
+      {
+        id: 1,
+        title: 'Man-x',
+      },
+      {
+        id: 2,
+        title: 'Matrix',
+      },
+    ];
   }
-
-  @Post('create')
-  create(@Body() movie: MovieDto) {
-    return this.movieService.create(movie);
-  }
-  //
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.movieService.findById(id);
-  // }
-  //
-  // @Put('update/:id')
-  // update(@Body() movie: MovieDto, @Param('id') id: string) {
-  //   return this.movieService.update(id, movie);
-  // }
-  //
-  // @Delete(':id')
-  // delete(@Param('id') id: string) {
-  //   return this.movieService.delete(id);
-  // }
 }
