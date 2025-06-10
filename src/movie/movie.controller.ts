@@ -1,6 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { MovieResponseDto } from './dto/movie.dto';
 
 @Controller('movie')
 @ApiTags('Movie')
@@ -13,19 +15,40 @@ export class MovieController {
     description: 'Get list of all movies as you can',
   })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'You got movie list',
+    type: [MovieResponseDto],
   })
   findAll() {
-    return [
-      {
-        id: 1,
-        title: 'Man-x',
-      },
-      {
-        id: 2,
-        title: 'Matrix',
-      },
-    ];
+    return [];
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get movie by ID',
+    description: 'You can get a movie by its ID',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'You got movie by ID',
+    type: MovieResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'could not find movie by ID',
+  })
+  findById(@Param('id') id: string) {
+    return {
+      id: 5,
+      title: 'Inception',
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Create a new movie',
+  })
+  @Post('create')
+  create(@Body() dto: CreateMovieDto) {
+    return dto;
   }
 }
