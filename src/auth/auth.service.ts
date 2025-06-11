@@ -100,7 +100,8 @@ export class AuthService {
   }
 
   async refresh(res: Response, req: Request) {
-    const refreshToken: string | null = req.cookies?.['refreshToken'];
+    const refreshToken: string =
+      (req.cookies?.['refreshToken'] as string) ?? '';
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not valid');

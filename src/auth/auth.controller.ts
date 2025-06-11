@@ -7,7 +7,6 @@ import {
   Post,
   Req,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDtoRequest } from './dto/register.dto';
@@ -22,7 +21,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthResponse } from './dto/auth.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { Authorization } from './decorators/authorization.decorator';
+import { Authorized } from './decorators/authorized.decorator';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -112,10 +113,10 @@ export class AuthController {
     description: 'Endpoint to get the currently authenticated user.',
     tags: ['Auth'],
   })
-  @UseGuards(AuthGuard('jwt'))
+  @Authorization()
   @HttpCode(HttpStatus.OK)
   @Get('me')
-  me(@Req() req: Request) {
-    return req.user;
+  me(@Authorized() user: User) {
+    return user;
   }
 }
