@@ -7,70 +7,13 @@ datasource db {
   url      = env("POSTGRES_URI")
 }
 
-model Movie {
-  id String @id @default(uuid(4))
-
-  title       String     @unique
-  description String?
-  releaseYear Int        @map("release_year")
-  rating      Float      @default(0.0)
-  isAviable   Boolean    @map("is_aviable") @default(false)
-  genre       MovieGenre @default(ACTION)
-
-  poster   MoviePoster? @relation("movie_poster", fields: [posterId], references: [id])
-  posterId String?      @unique @map("poster_id")
-  reviews  Review[]     @relation("movie_reviews")
-  actors   Actor[]      @relation("movie_actors")
-
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("movies")
-}
-
-model MoviePoster {
-  id  String @id @default(uuid(4))
-  url String
-
-  movie Movie? @relation("movie_poster")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("movie_poster")
-}
-
-model Review {
-  id     String  @id @default(uuid(4))
-  text   String
-  rating Decimal @default(0.0)
-
-  movie   Movie  @relation("movie_reviews", fields: [movieId], references: [id], onDelete: Cascade)
-  movieId String @map("movie_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("reviews")
-}
-
-model Actor {
-  id   String @id @default(uuid(4))
-  name String
-
-  movies Movie[] @relation("movie_actors")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("actors")
-}
-
-enum MovieGenre {
-  ACTION
-  COMEDY
-  DRAMA
-  HORROR
-
-  @@map("enum_genres")
+  @@map("users")
 }
