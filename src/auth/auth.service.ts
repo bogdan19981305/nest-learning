@@ -5,14 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDtoRequest } from './dto/register.dto';
 import { hash, verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt.interface';
-import { LoginRequest } from './dto/login.dto';
 import { Request, Response } from 'express';
 import { isDev } from '../utils/isDev.util';
+import { RegisterInput } from './inputs/register.input';
+import { LoginInput } from './inputs/login.input';
 
 @Injectable()
 export class AuthService {
@@ -36,8 +36,8 @@ export class AuthService {
     this.COOKIE_DOMAIN = this.configService.get<string>('COOKIE_DOMAIN', '');
   }
 
-  async register(res: Response, dto: RegisterDtoRequest) {
-    const { name, password, email } = dto;
+  async register(res: Response, input: RegisterInput) {
+    const { name, password, email } = input;
 
     const existsUser = await this.prismaService.user.findUnique({
       where: { email },
@@ -58,7 +58,7 @@ export class AuthService {
     return this.auth(res, user.id);
   }
 
-  async login(res: Response, dto: LoginRequest) {
+  async login(res: Response, dto: LoginInput) {
     const { email, password } = dto;
 
     const user = await this.prismaService.user.findUnique({
@@ -155,7 +155,7 @@ export class AuthService {
       domain: this.COOKIE_DOMAIN,
       expires,
       secure: !isDev(this.configService),
-      sameSite: isDev(this.configService) ? 'none' : 'lax',
+      sameSite: isDev(this.configService) ? 'strict' : 'lax',
     });
   }
 }
