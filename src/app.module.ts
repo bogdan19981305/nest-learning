@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { getGraphQLConfig } from './config/graphql.config';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { ArtistModule } from './artist/artist.module';
 
 @Module({
   imports: [
@@ -14,14 +10,7 @@ import { UserModule } from './user/user.module';
       envFilePath: '.env',
     }),
     PrismaModule,
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      useFactory: getGraphQLConfig,
-      driver: ApolloDriver,
-      inject: [ConfigService],
-      imports: [ConfigModule],
-    }),
-    AuthModule,
-    UserModule,
+    ArtistModule,
   ],
   controllers: [],
   providers: [],
